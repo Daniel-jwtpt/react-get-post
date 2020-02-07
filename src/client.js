@@ -1,0 +1,27 @@
+import { ApolloClient } from "apollo-client";
+import {
+  InMemoryCache,
+} from "apollo-cache-inmemory";
+import { HttpLink } from "apollo-link-http";
+
+
+const apiToken = process.env.REACT_APP_DATO_API_TOKEN;
+const headers = {
+  Accept: "application/json",
+  "Content-Type": "application/json",
+  Authorization: "Bearer " + apiToken
+};
+const cache = new InMemoryCache({
+  dataIdFromObject: obj => obj.id,
+  addTypename: false,
+});
+const link = new HttpLink({
+  uri: "https://graphql.datocms.com",
+  headers
+});
+const client = new ApolloClient({
+  cache,
+  link
+});
+
+export default client;

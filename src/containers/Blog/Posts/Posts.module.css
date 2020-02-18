@@ -5,3 +5,13 @@
     width: 80%;
     margin: auto;
 }
+
+.ContentTitle{
+    text-align: center;
+    padding: .5rem;
+}
+
+.ContentTitle p{
+    padding: .5rem;
+    box-shadow: 6px 6px 10px #ececec;;
+}

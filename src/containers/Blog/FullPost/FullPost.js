@@ -1,61 +1,52 @@
-import React, { Component } from 'react';
-import axios from 'axios';
+import React from "react";
+import gql from "graphql-tag";
+import { Query } from "react-apollo";
+import clsx from 'clsx';
 
-import './FullPost.css';
+import { Container } from 'react-bulma-components';
+import 'react-bulma-components/dist/react-bulma-components.min.css';
+import classes from "./FullPost.module.css";
 
-class FullPost extends Component {
-
-    state = {
-        loadedPost: null
+const articleQuery = gql`
+  query singleArticle($slug: String!) {
+    article: article(filter: {slug: {eq: $slug}}) {
+        id
+        title
+        slug
+        author
+        date
+        text
+      }
     }
+    
+`;
 
-    componentDidMount(){
-        this.loadData();
-    }
+const Article = props => {
+  return (
+    <Query query={articleQuery} variables={{ slug: props.match.params.slug }}>
+      {({ data, loading, error }) => {
+        if (loading) return "Loading...";
+        if (error) return "error...";
+        const { article } = data;
+        return (
+        <Container>
+          <section>
+            {article && (
+              <article>
+                <h1 className={clsx(classes.ArticleTitle, "title is-2")}>{article.title}</h1>
+                <strong>
+                  <span className={clsx(classes.ArticleDate, "is-size-7 tag")}>{article.date}</span>
+                </strong>
+                <p className={clsx(classes.ArticleText, "")}>{article.text}</p>
+                <small>{article.author}</small>
+              </article>
+            )}
+          </section>
+          </Container>
+        );
+      }}
+    </Query>
+  );
+};
 
-    componentDidUpdate(){
-        this.loadData();
-    }
-
-    loadData(){
-        if(this.props.match.params.id){
-            if(!this.state.loadedPost || (this.state.loadedPost && this.state.loadedPost.id !== +this.props.match.params.id)){
-                axios.get('/posts/' + this.props.match.params.id)
-                .then(response => {
-                    console.log(response)
-                    this.setState({loadedPost: response.data})
-                    
-                })
-            }
-        }
-    }
-
-
-    deletePostHandler = () => {
-        axios.delete('/posts/' + this.props.match.params.id)
-            .then(response => {
-                console.log(response)
-            } )
-    }
-
-    render () {
-        let post = <p style={{textAlign: 'center'}}>Please select a Post!</p>;
-        if(this.props.match.params.id){
-            post = <p style={{textAlign: 'center'}}>Loading</p>
-        }
-        if (this.state.loadedPost){
-            post = (
-                <div className="FullPost">
-                    <h1>{this.state.loadedPost.title}</h1>
-                    <p>{this.state.loadedPost.body}</p>
-                    <div className="Edit">
-                        <button onClick={this.deletePostHandler} className="Delete">Delete</button>
-                    </div>
-                </div>
-            );
-        }
-        return post;
-    }
-}
-
-export default FullPost;
+export default Article;

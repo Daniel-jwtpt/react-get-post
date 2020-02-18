@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route, NavLink, Switch, } from 'react-router-dom';
 
 //import Post from '../../components/Post/Post';
-//import FullPost from '../../components/FullPost/FullPost';
+import Article from '../../containers/Blog/FullPost/FullPost';
 //import NewPost from '../../components/NewPost/NewPost';
 import classes from './Blog.module.css';
 import Posts from './Posts/Posts';
@@ -27,7 +27,7 @@ class Blog extends Component {
                     <nav>
                         <ul>
                             <li>
-                                <NavLink  activeClassName={classes.active} to="/posts/" exact>Home</NavLink>
+                                <NavLink  activeClassName={classes.active} to="/" exact>Home</NavLink>
                             </li>
                             <li>
                                 <NavLink activeClassName={classes.active} to="/new-post">New Post</NavLink>
@@ -36,11 +36,9 @@ class Blog extends Component {
                     </nav>
                 </header>
                 <Switch>
-                    {/*<Route path="/" exact render={() => <h1>Home</h1>} /> */}
                     {this.state.auth ? <Route path="/new-post" exact component={asyncNewPost} /> : null}
-                    <Route path="/posts" component={Posts} />
-                    {/*<Redirect from="/" to="/posts" />*/}
-                    <Route render={()=> <h1>Not Found</h1>} />
+                    <Route exact path="/" component={Posts} />
+                    <Route path="/post/:slug" component={Article} />
                 </Switch>
             </div>
         );
